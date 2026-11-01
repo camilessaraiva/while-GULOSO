@@ -1,1 +1,1 @@
-# Jogo-de-LP1
+# while(GULOSO)
