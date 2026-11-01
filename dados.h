@@ -34,7 +34,7 @@ enum Direcao { CIMA, BAIXO, ESQUERDA, DIREITA };
 
 enum TipoInimigo { PATRULHEIRO, PERSEGUIDOR, SENTINELA };
 
-struct Robo {
+struct Guloso {
     int linha;
     int coluna;
     int energia;
