@@ -1,0 +1,36 @@
+ROBOLAB: WHILE GULOSO - REGRAS DO JOGO
+
+1. OBJETIVO GERAL
+O jogador controla o Guloso, navegando por um labirinto matricial de 30 linhas por 40 colunas repleto de doces e perigos. O objetivo e coletar a cota minima de doces da fase, capturar o Doce Dourado que destranca a saida e alcancar o portal de saida (S) antes do tempo limite de 5 minutos (300 segundos).
+
+2. BARRA DE FOME E VIDAS
+- O Guloso inicia cada partida com 3 vidas (representadas por coracoes) e 100% na Barra de Fome (energia).
+- A Barra de Fome decai naturalmente com o tempo (aproximadamente -1% a cada 1.5s).
+- Coletar doces recupera a fome e concede pontuacao:
+  * Bala: +2 pontos, recupera +5% de fome (45% chance de spawn)
+  * Chocolate: +5 pontos, recupera +10% de fome (25% chance de spawn)
+  * Rosquinha: +10 pontos, recupera +15% de fome (15% chance de spawn)
+  * Cupcake: +25 pontos, recupera +25% de fome (10% chance de spawn)
+  * Bolo: +50 pontos, recupera +50% de fome (5% chance de spawn)
+  * Doce Dourado: +100 pontos, recupera 100% de fome e abre a porta de saida.
+- Pirulito (Estacao de Energia): Restaura a fome para 100% de uso unico por pirulito.
+- Se a fome zerar (inanicao), o jogador perde 1 vida e a fome e restabelecida em 100%.
+
+3. ELEMENTOS E OBSTACULOS
+- Parede Fixa (codigo 1): Bloqueia totalmente a passagem.
+- Piso de Caramelo (codigo 2): Reduz a velocidade de movimento pela metade e causa dreno continuo de fome progressivamente mais rapido enquanto permanecer sobre ele.
+- Piso Escorregadio (codigo 8 - Basico): Ao pisar, faz o personagem deslizar 2 casas na direcao em que estava se movendo.
+- Porta Temporizada (codigo 9 - Intermediario): Abre e fecha ciclicamente a cada 4 segundos. Quando fechada, bloqueia o avanco.
+- Sentinela que Dispara (codigo 5 - Avancado): Identifica o jogador na mesma linha ou coluna e dispara projeteis de amendoim. Se atingido, retira 1 vida direta.
+
+4. INIMIGOS MOVEIS
+- Robo Patrulheiro (Fases 2 e 3): Desloca-se em vaivem e inverte o sentido ao tocar em paredes. Bater nele retira 1 vida direta.
+- Robo Perseguidor (Fase 3): Detecta a presenca do jogador a ate 7 celulas e o persegue desviando de paredes. Se alcancar o jogador, retira 1 vida direta.
+
+5. FASES E PROGRESSAO
+- Fase 1: Introducao, Paredes, Caramelo, Pirulitos e Piso Escorregadio.
+- Fase 2: Introducao de Robos Patrulheiros e Portas Temporizadas.
+- Fase 3: Introducao de Robos Perseguidores e Sentinelas que Disparam.
+- Concluir a Fase 3 com vidas restantes concede Vitoria no jogo!
+- Perder as 3 vidas resulta em Game Over.
+- Toda pontuacao e partidas sao registradas no arquivo binario estatisticas.dat.
