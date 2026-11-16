@@ -1,0 +1,255 @@
+#include "desenho_cenario.h"
+#include <cstdio>
+#include <cmath>
+
+using namespace std;
+
+void desenharCenario(const Fase &fase, bool portaAberta) {
+    ClearBackground((Color){245, 240, 235, 255});
+
+    for (int l = 0; l < LINHAS; l++) {
+        for (int c = 0; c < COLUNAS; c++) {
+            int x = c * TAM_CELULA;
+            int y = l * TAM_CELULA;
+            int cel = fase.mapa[l][c];
+
+            DrawRectangleLines(x, y, TAM_CELULA, TAM_CELULA, (Color){230, 220, 215, 255});
+
+            if (cel == PAREDE_FIXA) {
+                DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){150, 75, 45, 255});
+                DrawRectangleLines(x, y, TAM_CELULA, TAM_CELULA, (Color){110, 50, 30, 255});
+                DrawLine(x, y + TAM_CELULA / 2, x + TAM_CELULA, y + TAM_CELULA / 2, (Color){110, 50, 30, 255});
+                DrawLine(x + TAM_CELULA / 2, y, x + TAM_CELULA / 2, y + TAM_CELULA / 2, (Color){110, 50, 30, 255});
+            } else if (cel == CAMPO_ELETRICO) {
+                DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){210, 130, 40, 220});
+                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 2, 3, (Color){170, 95, 25, 255});
+            } else if (cel == ESTACAO_ENERGIA) {
+                DrawLine(x + TAM_CELULA / 2, y + TAM_CELULA / 2, x + TAM_CELULA / 2, y + TAM_CELULA - 2, WHITE);
+                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 3, 5, (Color){255, 60, 130, 255});
+                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 3, 2, WHITE);
+            } else if (cel == SAIDA) {
+                Color corSaida = (Color){60, 180, 75, 255};
+                DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, corSaida);
+                DrawRectangleLines(x + 2, y + 2, TAM_CELULA - 4, TAM_CELULA - 4, WHITE);
+                DrawText("S", x + 6, y + 3, 14, WHITE);
+            } else if (cel == OBS_BASICO) {
+                DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){170, 230, 255, 200});
+                DrawLine(x + 3, y + 15, x + 17, y + 5, WHITE);
+            } else if (cel == OBS_INTER) {
+                if (portaAberta) {
+                    DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){130, 220, 130, 160});
+                    DrawRectangleLines(x + 2, y + 2, TAM_CELULA - 4, TAM_CELULA - 4, DARKGREEN);
+                } else {
+                    DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){180, 40, 40, 230});
+                    DrawRectangleLines(x, y, TAM_CELULA, TAM_CELULA, MAROON);
+                    DrawLine(x + 2, y + 2, x + TAM_CELULA - 2, y + TAM_CELULA - 2, WHITE);
+                }
+            } else if (cel == OBS_ESPECIAL) {
+                DrawRectangle(x + 2, y + 2, TAM_CELULA - 4, TAM_CELULA - 4, (Color){90, 60, 45, 255});
+                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 2, 4, (Color){210, 105, 30, 255});
+            } else if (cel == PERIGO) {
+                DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){240, 100, 100, 180});
+            }
+        }
+    }
+}
+
+void desenharGuloso(const Guloso &guloso) {
+    int cx = guloso.coluna * TAM_CELULA + TAM_CELULA / 2;
+    int cy = guloso.linha * TAM_CELULA + TAM_CELULA / 2;
+
+    if (guloso.tempoInvulneravel > 0.0f) {
+        if ((int)(guloso.tempoInvulneravel * 10) % 2 == 0) return;
+    }
+
+    DrawCircle(cx, cy, 8, (Color){255, 215, 0, 255});
+    DrawCircleLines(cx, cy, 8, (Color){180, 130, 0, 255});
+
+    DrawCircle(cx - 3, cy - 2, 1, BLACK);
+    DrawCircle(cx + 3, cy - 2, 1, BLACK);
+
+    DrawCircleSector((Vector2){(float)cx, (float)cy + 1.0f}, 4.0f, 0, 180, 8, (Color){200, 50, 50, 255});
+}
+
+void desenharInimigos(const vector<Inimigo> &inimigos) {
+    for (const auto &ini : inimigos) {
+        int cx = ini.coluna * TAM_CELULA + TAM_CELULA / 2;
+        int cy = ini.linha * TAM_CELULA + TAM_CELULA / 2;
+
+        if (ini.tipo == PATRULHEIRO) {
+            DrawRectangle(cx - 7, cy - 7, 14, 14, (Color){70, 130, 180, 255});
+            DrawRectangleLines(cx - 7, cy - 7, 14, 14, (Color){30, 60, 100, 255});
+            DrawCircle(cx, cy, 3, YELLOW);
+        } else if (ini.tipo == PERSEGUIDOR) {
+            DrawCircle(cx, cy, 8, (Color){220, 20, 60, 255});
+            DrawCircleLines(cx, cy, 8, MAROON);
+            DrawCircle(cx - 3, cy - 2, 2, WHITE);
+            DrawCircle(cx + 3, cy - 2, 2, WHITE);
+            DrawCircle(cx - 3, cy - 2, 1, BLACK);
+            DrawCircle(cx + 3, cy - 2, 1, BLACK);
+        }
+    }
+}
+
+void desenharProjeteis(const vector<Projetil> &projeteis) {
+    for (const auto &p : projeteis) {
+        if (!p.ativo) continue;
+        DrawCircle((int)p.x, (int)p.y, 4, (Color){160, 82, 45, 255});
+        DrawCircleLines((int)p.x, (int)p.y, 4, WHITE);
+    }
+}
+
+void desenharDoces(const vector<DoceItem> &doces) {
+    for (const auto &d : doces) {
+        if (!d.ativo) continue;
+        int cx = d.coluna * TAM_CELULA + TAM_CELULA / 2;
+        int cy = d.linha * TAM_CELULA + TAM_CELULA / 2;
+
+        switch (d.tipo) {
+            case DOCE_BALA:
+                DrawCircle(cx, cy, 5, (Color){255, 75, 75, 255});
+                DrawCircleLines(cx, cy, 5, WHITE);
+                DrawTriangle((Vector2){(float)cx - 7, (float)cy - 3}, (Vector2){(float)cx - 7, (float)cy + 3}, (Vector2){(float)cx - 4, (float)cy}, WHITE);
+                DrawTriangle((Vector2){(float)cx + 7, (float)cy - 3}, (Vector2){(float)cx + 4, (float)cy}, (Vector2){(float)cx + 7, (float)cy + 3}, WHITE);
+                break;
+            case DOCE_CHOCOLATE:
+                DrawRectangle(cx - 6, cy - 5, 12, 10, (Color){105, 50, 25, 255});
+                DrawRectangleLines(cx - 6, cy - 5, 12, 10, (Color){70, 30, 15, 255});
+                DrawLine(cx, cy - 5, cx, cy + 5, (Color){140, 75, 40, 255});
+                break;
+            case DOCE_ROSQUINHA:
+                DrawCircle(cx, cy, 6, (Color){210, 140, 70, 255});
+                DrawCircle(cx, cy, 4, (Color){255, 105, 180, 255});
+                DrawCircle(cx, cy, 2, (Color){245, 240, 235, 255});
+                break;
+            case DOCE_CUPCAKE:
+                DrawRectangle(cx - 5, cy, 10, 5, (Color){180, 120, 70, 255});
+                DrawCircle(cx, cy - 1, 5, (Color){140, 210, 240, 255});
+                DrawCircle(cx, cy - 5, 2, RED);
+                break;
+            case DOCE_BOLO:
+                DrawRectangle(cx - 7, cy - 4, 14, 9, (Color){240, 215, 180, 255});
+                DrawRectangle(cx - 7, cy - 7, 14, 3, (Color){255, 100, 130, 255});
+                DrawRectangleLines(cx - 7, cy - 7, 14, 12, (Color){160, 80, 90, 255});
+                break;
+            case DOCE_DOURADO:
+                DrawCircle(cx, cy, 7, (Color){255, 215, 0, 255});
+                DrawCircleLines(cx, cy, 7, (Color){255, 255, 180, 255});
+                DrawCircle(cx, cy, 4, (Color){255, 245, 120, 255});
+                break;
+            default:
+                break;
+        }
+    }
+}
+
+void desenharPainel(const Guloso &guloso, int numeroFase, float tempoRestante, int metaDoces) {
+    int px = COLUNAS * TAM_CELULA;
+    DrawRectangle(px, 0, PAINEL_LARGURA, ALTURA_JANELA, (Color){45, 30, 40, 255});
+    DrawLine(px, 0, px, ALTURA_JANELA, (Color){85, 60, 75, 255});
+
+    DrawText("WHILE (GULOSO)", px + 40, 25, 24, (Color){255, 182, 193, 255});
+    DrawText(TextFormat("FASE %d DE %d", numeroFase, NUM_FASES), px + 80, 58, 16, (Color){230, 210, 220, 255});
+
+    DrawText("VIDAS:", px + 25, 95, 15, WHITE);
+    for (int i = 0; i < VIDAS_INICIAIS; i++) {
+        int hx = px + 100 + i * 26;
+        int hy = 102;
+        if (i < guloso.vidas) {
+            DrawCircle(hx - 4, hy - 2, 5, RED);
+            DrawCircle(hx + 4, hy - 2, 5, RED);
+            DrawTriangle((Vector2){(float)hx - 9, (float)hy}, (Vector2){(float)hx + 9, (float)hy}, (Vector2){(float)hx, (float)hy + 9}, RED);
+        } else {
+            DrawCircle(hx - 4, hy - 2, 5, (Color){90, 70, 80, 255});
+            DrawCircle(hx + 4, hy - 2, 5, (Color){90, 70, 80, 255});
+            DrawTriangle((Vector2){(float)hx - 9, (float)hy}, (Vector2){(float)hx + 9, (float)hy}, (Vector2){(float)hx, (float)hy + 9}, (Color){90, 70, 80, 255});
+        }
+    }
+
+    DrawText("FOME / SACIEDADE:", px + 25, 130, 15, WHITE);
+
+    float pct = guloso.energia / (float)ENERGIA_MAXIMA;
+    if (pct < 0.0f) pct = 0.0f;
+    if (pct > 1.0f) pct = 1.0f;
+
+    int fx = px + 60;
+    int fy = 160;
+
+    Color corFrango = (pct > 0.6f) ? (Color){205, 115, 45, 255} : ((pct > 0.3f) ? (Color){215, 150, 60, 255} : (Color){180, 70, 40, 255});
+    Color corCinza = (Color){80, 70, 75, 220};
+
+    Color corFinalCarne = (pct <= 0.05f) ? corCinza : corFrango;
+    Color corFinalOsso = (pct <= 0.05f) ? (Color){100, 95, 100, 255} : (Color){245, 240, 230, 255};
+
+    DrawRectangle(fx + 25, fy - 3, 20, 6, corFinalOsso);
+    DrawCircle(fx + 45, fy - 5, 4, corFinalOsso);
+    DrawCircle(fx + 45, fy + 5, 4, corFinalOsso);
+
+    DrawCircle(fx - 10, fy, 16, corFinalCarne);
+    DrawCircle(fx + 10, fy, 13, corFinalCarne);
+    DrawRectangle(fx - 10, fy - 12, 20, 24, corFinalCarne);
+
+    if (pct < 0.95f) {
+        float alturaVazia = 32.0f * (1.0f - pct);
+        DrawRectangle(fx - 28, fy - 16, 48, (int)alturaVazia, (Color){45, 30, 40, 200});
+        DrawCircle(fx - 10, fy, 16, (Color){80, 70, 75, (unsigned char)(180 * (1.0f - pct))});
+        DrawCircle(fx + 10, fy, 13, (Color){80, 70, 75, (unsigned char)(180 * (1.0f - pct))});
+    }
+
+    DrawRectangle(px + 130, 152, 135, 16, (Color){25, 15, 20, 255});
+    DrawRectangleLines(px + 130, 152, 135, 16, (Color){140, 110, 125, 255});
+    Color corBarraAux = (pct > 0.5f) ? (Color){210, 130, 50, 255} : ((pct > 0.25f) ? (Color){230, 170, 40, 255} : RED);
+    DrawRectangle(px + 132, 154, (int)(131 * pct), 12, corBarraAux);
+    DrawText(TextFormat("%d%%", (int)(pct * 100)), px + 175, 153, 13, WHITE);
+
+    int min = (int)tempoRestante / 60;
+    int seg = (int)tempoRestante % 60;
+    DrawText("TEMPO RESTANTE:", px + 25, 190, 15, WHITE);
+    Color corTempo = (tempoRestante < 60.0f) ? RED : (Color){180, 240, 255, 255};
+    DrawText(TextFormat("%02d:%02d", min, seg), px + 180, 190, 18, corTempo);
+
+    DrawLine(px + 25, 225, px + 265, 225, (Color){90, 70, 85, 255});
+
+    DrawText("INVENTARIO & DOCES", px + 45, 240, 17, (Color){255, 200, 100, 255});
+    DrawText(TextFormat("Doces: %d / %d", guloso.docesColetados, metaDoces), px + 25, 275, 16, WHITE);
+    DrawText(TextFormat("Pontuacao: %d pts", guloso.pontos), px + 25, 305, 16, (Color){255, 230, 120, 255});
+
+    DrawText("Doce Dourado:", px + 25, 345, 15, WHITE);
+    int dx = px + 180;
+    int dy = 352;
+    if (guloso.temDoceDourado) {
+        DrawCircle(dx, dy, 12, (Color){255, 215, 0, 255});
+        DrawCircleLines(dx, dy, 12, WHITE);
+        DrawCircle(dx, dy, 6, (Color){255, 245, 140, 255});
+        DrawText("OBTIDO!", px + 205, 345, 14, (Color){100, 255, 120, 255});
+    } else {
+        DrawCircle(dx, dy, 12, (Color){90, 80, 85, 140});
+        DrawCircleLines(dx, dy, 12, (Color){120, 110, 115, 140});
+        DrawCircle(dx, dy, 6, (Color){100, 95, 100, 140});
+        DrawText("PENDENTE", px + 200, 345, 13, (Color){160, 145, 150, 180});
+    }
+
+    DrawLine(px + 25, 395, px + 265, 395, (Color){90, 70, 85, 255});
+
+    DrawText("CONTROLES:", px + 25, 415, 15, (Color){200, 190, 200, 255});
+    DrawText("• Mover: Setas ou W A S D", px + 25, 440, 13, (Color){180, 175, 180, 255});
+    DrawText("• R: Ver regras da fase", px + 25, 465, 13, (Color){180, 175, 180, 255});
+    DrawText("• ESC: Menu principal", px + 25, 490, 13, (Color){180, 175, 180, 255});
+}
+
+void desenharMensagem(const char *titulo, const char *subtitulo, Color cor) {
+    DrawRectangle(150, 180, 500, 180, (Color){25, 20, 30, 235});
+    DrawRectangleLines(150, 180, 500, 180, cor);
+    int tLargura = MeasureText(titulo, 28);
+    DrawText(titulo, 400 - tLargura / 2, 215, 28, cor);
+    int sLargura = MeasureText(subtitulo, 16);
+    DrawText(subtitulo, 400 - sLargura / 2, 275, 16, WHITE);
+}
+
+int lerDirecaoTeclado() {
+    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W)) return CIMA;
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S)) return BAIXO;
+    if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A)) return ESQUERDA;
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D)) return DIREITA;
+    return -1;
+}
