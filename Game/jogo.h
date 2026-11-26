@@ -26,6 +26,15 @@ struct Jogo {
     int numeroFase;
     Fase faseAtual;
     Guloso guloso;
+    Texture2D gulosoSprite;
+    Texture2D DoceDouradoSprite;
+    Texture2D pirulitoSprite;
+    Texture2D balaSprite;
+    Texture2D chocolateSprite;
+    Texture2D jujubaSprite;
+    Texture2D donutSprite;
+    Texture2D boloSprite;
+    Texture2D cupcakeInimigoSprite;
     vector<Inimigo> inimigos;
     vector<Projetil> projeteis;
     vector<DoceItem> doces;

@@ -10,10 +10,10 @@ O jogador controla o Guloso, navegando por um labirinto matricial de 30 linhas p
   * Bala: +2 pontos, recupera +5% de fome (45% chance de spawn)
   * Chocolate: +5 pontos, recupera +10% de fome (25% chance de spawn)
   * Rosquinha: +10 pontos, recupera +15% de fome (15% chance de spawn)
-  * Cupcake: +25 pontos, recupera +25% de fome (10% chance de spawn)
-  * Bolo: +50 pontos, recupera +50% de fome (5% chance de spawn)
+  * Jujuba: +25 pontos, recupera +25% de fome (10% chance de spawn)
+  * Pirulito: +50 pontos, recupera +50% de fome (5% chance de spawn)
   * Doce Dourado: +100 pontos, recupera 100% de fome e abre a porta de saida.
-- Pirulito (Estacao de Energia): Restaura a fome para 100% de uso unico por pirulito.
+- Bolo (Estacao de Energia): Restaura a fome para 100% de uso unico por pirulito.
 - Se a fome zerar (inanicao), o jogador perde 1 vida e a fome e restabelecida em 100%.
 
 3. ELEMENTOS E OBSTACULOS

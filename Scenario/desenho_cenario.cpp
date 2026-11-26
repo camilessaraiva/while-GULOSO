@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void desenharCenario(const Fase &fase, bool portaAberta) {
+void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite) {
     ClearBackground((Color){245, 240, 235, 255});
 
     for (int l = 0; l < LINHAS; l++) {
@@ -24,9 +24,17 @@ void desenharCenario(const Fase &fase, bool portaAberta) {
                 DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){210, 130, 40, 220});
                 DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 2, 3, (Color){170, 95, 25, 255});
             } else if (cel == ESTACAO_ENERGIA) {
-                DrawLine(x + TAM_CELULA / 2, y + TAM_CELULA / 2, x + TAM_CELULA / 2, y + TAM_CELULA - 2, WHITE);
-                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 3, 5, (Color){255, 60, 130, 255});
-                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 3, 2, WHITE);
+                Rectangle origem = { 
+                    0.0f, 0.0f, 
+                    (float)boloSprite.width, 
+                    (float)boloSprite.height 
+                };
+                Rectangle destino = { 
+                    x, y, 
+                    (float)TAM_CELULA, (float)TAM_CELULA 
+                };
+                Vector2 pivo = { 0.0f, 0.0f };
+                DrawTexturePro(boloSprite, origem, destino, pivo, 0.0f, WHITE);
             } else if (cel == SAIDA) {
                 Color corSaida = (Color){60, 180, 75, 255};
                 DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, corSaida);
@@ -54,39 +62,56 @@ void desenharCenario(const Fase &fase, bool portaAberta) {
     }
 }
 
-void desenharGuloso(const Guloso &guloso) {
-    int cx = guloso.coluna * TAM_CELULA + TAM_CELULA / 2;
-    int cy = guloso.linha * TAM_CELULA + TAM_CELULA / 2;
-
+void desenharGuloso(const Guloso &guloso, Texture2D textura) {
     if (guloso.tempoInvulneravel > 0.0f) {
-        if ((int)(guloso.tempoInvulneravel * 10) % 2 == 0) return;
+        if ((int)(guloso.tempoInvulneravel * 10) % 2 == 0) return; //pisca qd invulneravel
     }
+    float x = (float)(guloso.coluna * TAM_CELULA);
+    float y = (float)(guloso.linha * TAM_CELULA);
 
-    DrawCircle(cx, cy, 8, (Color){255, 215, 0, 255});
-    DrawCircleLines(cx, cy, 8, (Color){180, 130, 0, 255});
 
-    DrawCircle(cx - 3, cy - 2, 1, BLACK);
-    DrawCircle(cx + 3, cy - 2, 1, BLACK);
+    Rectangle origem = { 
+        0.0f, 0.0f, 
+        (float)textura.width, 
+        (float)textura.height 
+    };
 
-    DrawCircleSector((Vector2){(float)cx, (float)cy + 1.0f}, 4.0f, 0, 180, 8, (Color){200, 50, 50, 255});
+    Rectangle destino = { 
+        x, y, 
+        (float)TAM_CELULA, (float)TAM_CELULA 
+    };
+
+    Vector2 pivo = { 0.0f, 0.0f };
+
+    DrawTexturePro(textura, origem, destino, pivo, 0.0f, WHITE);
 }
 
-void desenharInimigos(const vector<Inimigo> &inimigos) {
+void desenharInimigos(const vector<Inimigo> &inimigos, Texture2D cupcakeInimigoSprite) {
     for (const auto &ini : inimigos) {
         int cx = ini.coluna * TAM_CELULA + TAM_CELULA / 2;
         int cy = ini.linha * TAM_CELULA + TAM_CELULA / 2;
 
         if (ini.tipo == PATRULHEIRO) {
-            DrawRectangle(cx - 7, cy - 7, 14, 14, (Color){70, 130, 180, 255});
-            DrawRectangleLines(cx - 7, cy - 7, 14, 14, (Color){30, 60, 100, 255});
-            DrawCircle(cx, cy, 3, YELLOW);
+            float x = (float)(ini.coluna * TAM_CELULA);
+            float y = (float)(ini.linha * TAM_CELULA);
+            Rectangle origem = { 
+                0.0f, 0.0f, 
+                (float)cupcakeInimigoSprite.width, 
+                (float)cupcakeInimigoSprite.height 
+            };
+            Rectangle destino = { 
+                x, y, 
+                (float)TAM_CELULA, (float)TAM_CELULA 
+            };
+            Vector2 pivo = { 0.0f, 0.0f };
+            DrawTexturePro(cupcakeInimigoSprite, origem, destino, pivo, 0.0f, WHITE);
         } else if (ini.tipo == PERSEGUIDOR) {
             DrawCircle(cx, cy, 8, (Color){220, 20, 60, 255});
             DrawCircleLines(cx, cy, 8, MAROON);
             DrawCircle(cx - 3, cy - 2, 2, WHITE);
             DrawCircle(cx + 3, cy - 2, 2, WHITE);
             DrawCircle(cx - 3, cy - 2, 1, BLACK);
-            DrawCircle(cx + 3, cy - 2, 1, BLACK);
+            DrawCircle(cx + 3, cy - 2, 1, BLACK); 
         }
     }
 }
@@ -99,47 +124,51 @@ void desenharProjeteis(const vector<Projetil> &projeteis) {
     }
 }
 
-void desenharDoces(const vector<DoceItem> &doces) {
+void desenharDoces(const vector<DoceItem> &doces, Texture2D doceBala, Texture2D doceChocolate, Texture2D doceRosquinha, Texture2D doceJujuba, Texture2D docePirulito, Texture2D doceDourado) {
     for (const auto &d : doces) {
         if (!d.ativo) continue;
-        int cx = d.coluna * TAM_CELULA + TAM_CELULA / 2;
-        int cy = d.linha * TAM_CELULA + TAM_CELULA / 2;
 
+        Texture2D textura;
         switch (d.tipo) {
             case DOCE_BALA:
-                DrawCircle(cx, cy, 5, (Color){255, 75, 75, 255});
-                DrawCircleLines(cx, cy, 5, WHITE);
-                DrawTriangle((Vector2){(float)cx - 7, (float)cy - 3}, (Vector2){(float)cx - 7, (float)cy + 3}, (Vector2){(float)cx - 4, (float)cy}, WHITE);
-                DrawTriangle((Vector2){(float)cx + 7, (float)cy - 3}, (Vector2){(float)cx + 4, (float)cy}, (Vector2){(float)cx + 7, (float)cy + 3}, WHITE);
+                textura = doceBala;
                 break;
             case DOCE_CHOCOLATE:
-                DrawRectangle(cx - 6, cy - 5, 12, 10, (Color){105, 50, 25, 255});
-                DrawRectangleLines(cx - 6, cy - 5, 12, 10, (Color){70, 30, 15, 255});
-                DrawLine(cx, cy - 5, cx, cy + 5, (Color){140, 75, 40, 255});
+                textura = doceChocolate;
                 break;
             case DOCE_ROSQUINHA:
-                DrawCircle(cx, cy, 6, (Color){210, 140, 70, 255});
-                DrawCircle(cx, cy, 4, (Color){255, 105, 180, 255});
-                DrawCircle(cx, cy, 2, (Color){245, 240, 235, 255});
+                textura = doceRosquinha;
                 break;
-            case DOCE_CUPCAKE:
-                DrawRectangle(cx - 5, cy, 10, 5, (Color){180, 120, 70, 255});
-                DrawCircle(cx, cy - 1, 5, (Color){140, 210, 240, 255});
-                DrawCircle(cx, cy - 5, 2, RED);
+            case DOCE_JUJUBA:
+                textura = doceJujuba;
                 break;
-            case DOCE_BOLO:
-                DrawRectangle(cx - 7, cy - 4, 14, 9, (Color){240, 215, 180, 255});
-                DrawRectangle(cx - 7, cy - 7, 14, 3, (Color){255, 100, 130, 255});
-                DrawRectangleLines(cx - 7, cy - 7, 14, 12, (Color){160, 80, 90, 255});
+            case DOCE_PIRULITO:
+                textura = docePirulito;
                 break;
             case DOCE_DOURADO:
-                DrawCircle(cx, cy, 7, (Color){255, 215, 0, 255});
-                DrawCircleLines(cx, cy, 7, (Color){255, 255, 180, 255});
-                DrawCircle(cx, cy, 4, (Color){255, 245, 120, 255});
+                textura = doceDourado;
                 break;
             default:
-                break;
+                continue;
         }
+
+        float x = (float)(d.coluna * TAM_CELULA);
+        float y = (float)(d.linha * TAM_CELULA);
+
+        Rectangle origem = { 
+            0.0f, 0.0f, 
+            (float)textura.width, 
+            (float)textura.height 
+        };
+
+        Rectangle destino = { 
+            x, y, 
+            (float)TAM_CELULA, (float)TAM_CELULA 
+        };
+
+        Vector2 pivo = { 0.0f, 0.0f };
+
+        DrawTexturePro(textura, origem, destino, pivo, 0.0f, WHITE);
     }
 }
 

@@ -52,8 +52,8 @@ static void tentarSpawnDoce(Jogo &jogo) {
                     if (r < 45) tipo = DOCE_BALA;
                     else if (r < 70) tipo = DOCE_CHOCOLATE;
                     else if (r < 85) tipo = DOCE_ROSQUINHA;
-                    else if (r < 95) tipo = DOCE_CUPCAKE;
-                    else tipo = DOCE_BOLO;
+                    else if (r < 95) tipo = DOCE_JUJUBA;
+                    else tipo = DOCE_PIRULITO;
                 }
 
                 DoceItem novo;
@@ -88,6 +88,34 @@ void inicializarJogo(Jogo &jogo) {
     jogo.tempoRepeticaoBackspace = 0.0f;
     jogo.arrastandoMusica = false;
     jogo.arrastandoEfeitos = false;
+    jogo.gulosoSprite = LoadTexture("Assets/images/guloso.png");
+    GenTextureMipmaps(&jogo.gulosoSprite);
+    SetTextureFilter(jogo.gulosoSprite, TEXTURE_FILTER_TRILINEAR); //tira o efeito pixelizado da imagem
+    jogo.DoceDouradoSprite = LoadTexture("Assets/images/dourado.png");
+    GenTextureMipmaps(&jogo.DoceDouradoSprite);
+    SetTextureFilter(jogo.DoceDouradoSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.pirulitoSprite = LoadTexture("Assets/images/pirulito.png");
+    GenTextureMipmaps(&jogo.pirulitoSprite);
+    SetTextureFilter(jogo.pirulitoSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.balaSprite = LoadTexture("Assets/images/bala.png");
+    GenTextureMipmaps(&jogo.balaSprite);
+    SetTextureFilter(jogo.balaSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.chocolateSprite = LoadTexture("Assets/images/choco.png");
+    GenTextureMipmaps(&jogo.chocolateSprite);
+    SetTextureFilter(jogo.chocolateSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.jujubaSprite = LoadTexture("Assets/images/jujuba.png");
+    GenTextureMipmaps(&jogo.jujubaSprite);
+    SetTextureFilter(jogo.jujubaSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.donutSprite = LoadTexture("Assets/images/donut.png");
+    GenTextureMipmaps(&jogo.donutSprite);
+    SetTextureFilter(jogo.donutSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.boloSprite = LoadTexture("Assets/images/bolo.png");
+    GenTextureMipmaps(&jogo.boloSprite);
+    SetTextureFilter(jogo.boloSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.cupcakeInimigoSprite = LoadTexture("Assets/images/cupcakedomal.png");
+    GenTextureMipmaps(&jogo.cupcakeInimigoSprite);
+    SetTextureFilter(jogo.cupcakeInimigoSprite, TEXTURE_FILTER_TRILINEAR);
+
 
     if (FileExists("Assets/sounds/click.wav")) {
         jogo.somClick = LoadSound("Assets/sounds/click.wav");
@@ -128,6 +156,15 @@ void finalizarJogo(Jogo &jogo) {
         UnloadMusicStream(jogo.musicaMenu);
         jogo.musicaCarregada = false;
     }
+    UnloadTexture(jogo.gulosoSprite);
+    UnloadTexture(jogo.DoceDouradoSprite);
+    UnloadTexture(jogo.pirulitoSprite);
+    UnloadTexture(jogo.balaSprite);
+    UnloadTexture(jogo.chocolateSprite);
+    UnloadTexture(jogo.jujubaSprite);
+    UnloadTexture(jogo.donutSprite);
+    UnloadTexture(jogo.boloSprite);
+    UnloadTexture(jogo.cupcakeInimigoSprite);
 }
 
 void iniciarFase(Jogo &jogo, int faseNum) {
@@ -502,10 +539,10 @@ void atualizarJogo(Jogo &jogo, float dt) {
             } else if (d.tipo == DOCE_ROSQUINHA) {
                 jogo.guloso.pontos += 10;
                 jogo.guloso.energia = min((float)ENERGIA_MAXIMA, jogo.guloso.energia + 15.0f);
-            } else if (d.tipo == DOCE_CUPCAKE) {
+            } else if (d.tipo == DOCE_JUJUBA) {
                 jogo.guloso.pontos += 25;
                 jogo.guloso.energia = min((float)ENERGIA_MAXIMA, jogo.guloso.energia + 25.0f);
-            } else if (d.tipo == DOCE_BOLO) {
+            } else if (d.tipo == DOCE_PIRULITO) {
                 jogo.guloso.pontos += 50;
                 jogo.guloso.energia = min((float)ENERGIA_MAXIMA, jogo.guloso.energia + 50.0f);
             } else if (d.tipo == DOCE_DOURADO) {
@@ -736,11 +773,11 @@ void desenharJogo(const Jogo &jogo) {
         return;
     }
 
-    desenharCenario(jogo.faseAtual, jogo.portaAberta);
-    desenharDoces(jogo.doces);
-    desenharInimigos(jogo.inimigos);
+    desenharCenario(jogo.faseAtual, jogo.portaAberta, jogo.boloSprite);
+    desenharDoces(jogo.doces, jogo.balaSprite, jogo.chocolateSprite, jogo.donutSprite, jogo.jujubaSprite, jogo.pirulitoSprite, jogo.DoceDouradoSprite);
+    desenharInimigos(jogo.inimigos, jogo.cupcakeInimigoSprite);
     desenharProjeteis(jogo.projeteis);
-    desenharGuloso(jogo.guloso);
+    desenharGuloso(jogo.guloso, jogo.gulosoSprite);
     desenharPainel(jogo.guloso, jogo.numeroFase, jogo.tempoFase, jogo.faseAtual.metaDoces);
 
     if (jogo.estado == ESTADO_PAUSA) {

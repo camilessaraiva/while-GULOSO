@@ -35,8 +35,8 @@ enum TipoDoce {
     DOCE_BALA,
     DOCE_CHOCOLATE,
     DOCE_ROSQUINHA,
-    DOCE_CUPCAKE,
-    DOCE_BOLO,
+    DOCE_JUJUBA,
+    DOCE_PIRULITO,
     DOCE_DOURADO
 };
 
