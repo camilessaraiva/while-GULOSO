@@ -5,13 +5,13 @@
 
 using namespace std;
 
-void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite);
+void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite, Texture2D sorveteInimigoSprite);
 
 void desenharGuloso(const Guloso &guloso, Texture2D textura);
 
-void desenharInimigos(const vector<Inimigo> &inimigos, Texture2D cupcakeInimigoSprite);
+void desenharInimigos(const vector<Inimigo> &inimigos, Texture2D cupcakeInimigoSprite, Texture2D rocamboleInimigoSprite);
 
-void desenharProjeteis(const vector<Projetil> &projeteis);
+void desenharProjeteis(const vector<Projetil> &projeteis, Texture2D geloSprite);
 
 void desenharDoces(const vector<DoceItem> &doces, Texture2D doceBala, Texture2D doceChocolate, Texture2D doceRosquinha, Texture2D doceJujuba, Texture2D docePirulito, Texture2D doceDourado);
 

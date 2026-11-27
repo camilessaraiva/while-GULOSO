@@ -214,7 +214,7 @@ void atualizarSentinelasEProjeteis(const Fase &fase, const Guloso &guloso, vecto
                         Projetil p;
                         p.x = c * TAM_CELULA + TAM_CELULA / 2.0f;
                         p.y = l * TAM_CELULA + TAM_CELULA / 2.0f;
-                        p.vx = (guloso.coluna > c) ? 220.0f : -220.0f;
+                        p.vx = (guloso.coluna > c) ? (11.0f * TAM_CELULA) : (-11.0f * TAM_CELULA);
                         p.vy = 0.0f;
                         p.ativo = true;
                         projeteis.push_back(p);
@@ -223,7 +223,7 @@ void atualizarSentinelasEProjeteis(const Fase &fase, const Guloso &guloso, vecto
                         p.x = c * TAM_CELULA + TAM_CELULA / 2.0f;
                         p.y = l * TAM_CELULA + TAM_CELULA / 2.0f;
                         p.vx = 0.0f;
-                        p.vy = (guloso.linha > l) ? 220.0f : -220.0f;
+                        p.vy = (guloso.linha > l) ? (11.0f * TAM_CELULA) : (-11.0f * TAM_CELULA);
                         p.ativo = true;
                         projeteis.push_back(p);
                     }

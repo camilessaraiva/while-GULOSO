@@ -3,7 +3,7 @@
 const int LINHAS = 30;
 const int COLUNAS = 40;
 
-const int TAM_CELULA = 20;
+const int TAM_CELULA = 33;
 const int PAINEL_LARGURA = 300;
 const int LARGURA_JANELA = COLUNAS * TAM_CELULA + PAINEL_LARGURA; 
 const int ALTURA_JANELA = LINHAS * TAM_CELULA;                    

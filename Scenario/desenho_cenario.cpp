@@ -4,7 +4,7 @@
 
 using namespace std;
 
-void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite) {
+void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite, Texture2D sorveteInimigoSprite) {
     ClearBackground((Color){245, 240, 235, 255});
 
     for (int l = 0; l < LINHAS; l++) {
@@ -22,7 +22,7 @@ void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite) {
                 DrawLine(x + TAM_CELULA / 2, y, x + TAM_CELULA / 2, y + TAM_CELULA / 2, (Color){110, 50, 30, 255});
             } else if (cel == CAMPO_ELETRICO) {
                 DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){210, 130, 40, 220});
-                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 2, 3, (Color){170, 95, 25, 255});
+                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 2, (float)TAM_CELULA * 0.15f, (Color){170, 95, 25, 255});
             } else if (cel == ESTACAO_ENERGIA) {
                 Rectangle origem = { 
                     0.0f, 0.0f, 
@@ -30,7 +30,7 @@ void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite) {
                     (float)boloSprite.height 
                 };
                 Rectangle destino = { 
-                    x, y, 
+                    (float)x, (float)y, 
                     (float)TAM_CELULA, (float)TAM_CELULA 
                 };
                 Vector2 pivo = { 0.0f, 0.0f };
@@ -39,10 +39,13 @@ void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite) {
                 Color corSaida = (Color){60, 180, 75, 255};
                 DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, corSaida);
                 DrawRectangleLines(x + 2, y + 2, TAM_CELULA - 4, TAM_CELULA - 4, WHITE);
-                DrawText("S", x + 6, y + 3, 14, WHITE);
+                int tamFonte = (int)(TAM_CELULA * 0.6f);
+                int largTexto = MeasureText("S", tamFonte);
+                DrawText("S", x + (TAM_CELULA - largTexto) / 2, y + (TAM_CELULA - tamFonte) / 2, tamFonte, WHITE);
             } else if (cel == OBS_BASICO) {
                 DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){170, 230, 255, 200});
-                DrawLine(x + 3, y + 15, x + 17, y + 5, WHITE);
+                DrawLine(x + (int)(TAM_CELULA * 0.15f), y + (int)(TAM_CELULA * 0.75f),
+                         x + (int)(TAM_CELULA * 0.85f), y + (int)(TAM_CELULA * 0.25f), WHITE);
             } else if (cel == OBS_INTER) {
                 if (portaAberta) {
                     DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){130, 220, 130, 160});
@@ -53,8 +56,17 @@ void desenharCenario(const Fase &fase, bool portaAberta, Texture2D boloSprite) {
                     DrawLine(x + 2, y + 2, x + TAM_CELULA - 2, y + TAM_CELULA - 2, WHITE);
                 }
             } else if (cel == OBS_ESPECIAL) {
-                DrawRectangle(x + 2, y + 2, TAM_CELULA - 4, TAM_CELULA - 4, (Color){90, 60, 45, 255});
-                DrawCircle(x + TAM_CELULA / 2, y + TAM_CELULA / 2, 4, (Color){210, 105, 30, 255});
+                Rectangle origem = { 
+                    0.0f, 0.0f, 
+                    (float)sorveteInimigoSprite.width, 
+                    (float)sorveteInimigoSprite.height 
+                };
+                Rectangle destino = { 
+                    (float)x, (float)y, 
+                    (float)TAM_CELULA, (float)TAM_CELULA 
+                };
+                Vector2 pivo = { 0.0f, 0.0f };
+                DrawTexturePro(sorveteInimigoSprite, origem, destino, pivo, 0.0f, WHITE);
             } else if (cel == PERIGO) {
                 DrawRectangle(x, y, TAM_CELULA, TAM_CELULA, (Color){240, 100, 100, 180});
             }
@@ -86,11 +98,8 @@ void desenharGuloso(const Guloso &guloso, Texture2D textura) {
     DrawTexturePro(textura, origem, destino, pivo, 0.0f, WHITE);
 }
 
-void desenharInimigos(const vector<Inimigo> &inimigos, Texture2D cupcakeInimigoSprite) {
+void desenharInimigos(const vector<Inimigo> &inimigos, Texture2D cupcakeInimigoSprite, Texture2D rocamboleInimigoSprite) {
     for (const auto &ini : inimigos) {
-        int cx = ini.coluna * TAM_CELULA + TAM_CELULA / 2;
-        int cy = ini.linha * TAM_CELULA + TAM_CELULA / 2;
-
         if (ini.tipo == PATRULHEIRO) {
             float x = (float)(ini.coluna * TAM_CELULA);
             float y = (float)(ini.linha * TAM_CELULA);
@@ -106,21 +115,37 @@ void desenharInimigos(const vector<Inimigo> &inimigos, Texture2D cupcakeInimigoS
             Vector2 pivo = { 0.0f, 0.0f };
             DrawTexturePro(cupcakeInimigoSprite, origem, destino, pivo, 0.0f, WHITE);
         } else if (ini.tipo == PERSEGUIDOR) {
-            DrawCircle(cx, cy, 8, (Color){220, 20, 60, 255});
-            DrawCircleLines(cx, cy, 8, MAROON);
-            DrawCircle(cx - 3, cy - 2, 2, WHITE);
-            DrawCircle(cx + 3, cy - 2, 2, WHITE);
-            DrawCircle(cx - 3, cy - 2, 1, BLACK);
-            DrawCircle(cx + 3, cy - 2, 1, BLACK); 
+            float x = (float)(ini.coluna * TAM_CELULA);
+            float y = (float)(ini.linha * TAM_CELULA);
+            Rectangle origem = { 
+                0.0f, 0.0f, 
+                (float)rocamboleInimigoSprite.width, 
+                (float)rocamboleInimigoSprite.height 
+            };
+            Rectangle destino = { 
+                x, y, 
+                (float)TAM_CELULA, (float)TAM_CELULA 
+            };
+            Vector2 pivo = { 0.0f, 0.0f };
+            DrawTexturePro(rocamboleInimigoSprite, origem, destino, pivo, 0.0f, WHITE);
         }
     }
 }
 
-void desenharProjeteis(const vector<Projetil> &projeteis) {
+void desenharProjeteis(const vector<Projetil> &projeteis, Texture2D geloSprite) {
     for (const auto &p : projeteis) {
         if (!p.ativo) continue;
-        DrawCircle((int)p.x, (int)p.y, 4, (Color){160, 82, 45, 255});
-        DrawCircleLines((int)p.x, (int)p.y, 4, WHITE);
+        Rectangle origem = { 
+            0.0f, 0.0f, 
+            (float)geloSprite.width, 
+            (float)geloSprite.height 
+        };
+        Rectangle destino = { 
+            p.x, p.y, 
+            (float)TAM_CELULA, (float)TAM_CELULA 
+        };
+        Vector2 pivo = { (float)TAM_CELULA / 2.0f, (float)TAM_CELULA / 2.0f };
+        DrawTexturePro(geloSprite, origem, destino, pivo, 0.0f, WHITE);
     }
 }
 
@@ -267,12 +292,16 @@ void desenharPainel(const Guloso &guloso, int numeroFase, float tempoRestante, i
 }
 
 void desenharMensagem(const char *titulo, const char *subtitulo, Color cor) {
-    DrawRectangle(150, 180, 500, 180, (Color){25, 20, 30, 235});
-    DrawRectangleLines(150, 180, 500, 180, cor);
+    int larg = 500;
+    int alt = 180;
+    int x = (COLUNAS * TAM_CELULA - larg) / 2;
+    int y = (ALTURA_JANELA - alt) / 2;
+    DrawRectangle(x, y, larg, alt, (Color){25, 20, 30, 235});
+    DrawRectangleLines(x, y, larg, alt, cor);
     int tLargura = MeasureText(titulo, 28);
-    DrawText(titulo, 400 - tLargura / 2, 215, 28, cor);
+    DrawText(titulo, x + (larg - tLargura) / 2, y + 35, 28, cor);
     int sLargura = MeasureText(subtitulo, 16);
-    DrawText(subtitulo, 400 - sLargura / 2, 275, 16, WHITE);
+    DrawText(subtitulo, x + (larg - sLargura) / 2, y + 95, 16, WHITE);
 }
 
 int lerDirecaoTeclado() {

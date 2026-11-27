@@ -115,6 +115,15 @@ void inicializarJogo(Jogo &jogo) {
     jogo.cupcakeInimigoSprite = LoadTexture("Assets/images/cupcakedomal.png");
     GenTextureMipmaps(&jogo.cupcakeInimigoSprite);
     SetTextureFilter(jogo.cupcakeInimigoSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.sorveteInimigoSprite = LoadTexture("Assets/images/sorveteinimigo.png");
+    GenTextureMipmaps(&jogo.sorveteInimigoSprite);
+    SetTextureFilter(jogo.sorveteInimigoSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.rocamboleInimigoSprite = LoadTexture("Assets/images/rocamboledomal.png");
+    GenTextureMipmaps(&jogo.rocamboleInimigoSprite);
+    SetTextureFilter(jogo.rocamboleInimigoSprite, TEXTURE_FILTER_TRILINEAR);
+    jogo.geloSprite = LoadTexture("Assets/images/gelo.png");
+    GenTextureMipmaps(&jogo.geloSprite);
+    SetTextureFilter(jogo.geloSprite, TEXTURE_FILTER_TRILINEAR);
 
 
     if (FileExists("Assets/sounds/click.wav")) {
@@ -165,6 +174,9 @@ void finalizarJogo(Jogo &jogo) {
     UnloadTexture(jogo.donutSprite);
     UnloadTexture(jogo.boloSprite);
     UnloadTexture(jogo.cupcakeInimigoSprite);
+    UnloadTexture(jogo.sorveteInimigoSprite);
+    UnloadTexture(jogo.rocamboleInimigoSprite);
+    UnloadTexture(jogo.geloSprite);
 }
 
 void iniciarFase(Jogo &jogo, int faseNum) {
@@ -223,7 +235,9 @@ void atualizarJogo(Jogo &jogo, float dt) {
 
     if (jogo.estado == ESTADO_MENU) {
         Vector2 mouse = GetMousePosition();
-        Rectangle caixaTexto = {350, 210, 400, 45};
+        int cx = (LARGURA_JANELA - 400) / 2;
+        int bx = (LARGURA_JANELA - 200) / 2;
+        Rectangle caixaTexto = {(float)cx, 210.0f, 400.0f, 45.0f};
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             if (CheckCollisionPointRec(mouse, caixaTexto)) {
@@ -268,20 +282,20 @@ void atualizarJogo(Jogo &jogo, float dt) {
         }
 
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){450, 285, 200, 38})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, 285.0f, 200.0f, 38.0f})) {
                 tocarClick(jogo);
                 if (jogo.nomeJogador.empty()) jogo.nomeJogador = "Jogador";
                 jogo.estado = ESTADO_PERGUNTA_PRIMEIRA_VEZ;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){450, 335, 200, 38})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, 335.0f, 200.0f, 38.0f})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_CONFIGURACOES;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){450, 385, 200, 38})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, 385.0f, 200.0f, 38.0f})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_REGRAS;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){450, 435, 200, 38})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, 435.0f, 200.0f, 38.0f})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_RANKING;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){450, 485, 200, 38})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, 485.0f, 200.0f, 38.0f})) {
                 tocarClick(jogo);
                 jogo.deveFechar = true;
             }
@@ -298,23 +312,28 @@ void atualizarJogo(Jogo &jogo, float dt) {
             return;
         }
 
+        int cx = (LARGURA_JANELA - 600) / 2;
+        int cy = 140;
+        int sx = cx + 80;
+        int bx = (LARGURA_JANELA - 200) / 2;
+
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){370, 205, 360, 42})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)sx - 10, (float)cy + 65, 360, 42})) {
                 jogo.arrastandoMusica = true;
-                float v = (mouse.x - 380.0f) / 340.0f;
+                float v = (mouse.x - sx) / 340.0f;
                 if (v < 0.0f) v = 0.0f;
                 if (v > 1.0f) v = 1.0f;
                 jogo.volumeMusica = v;
                 if (jogo.musicaCarregada) SetMusicVolume(jogo.musicaMenu, jogo.volumeMusica);
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){370, 305, 360, 42})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)sx - 10, (float)cy + 165, 360, 42})) {
                 jogo.arrastandoEfeitos = true;
-                float v = (mouse.x - 380.0f) / 340.0f;
+                float v = (mouse.x - sx) / 340.0f;
                 if (v < 0.0f) v = 0.0f;
                 if (v > 1.0f) v = 1.0f;
                 jogo.volumeEfeitos = v;
                 if (jogo.somCarregado) SetSoundVolume(jogo.somClick, jogo.volumeEfeitos);
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){450, 430, 200, 42})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)cy + 290, 200, 42})) {
                 tocarClick(jogo);
                 jogo.arrastandoMusica = false;
                 jogo.arrastandoEfeitos = false;
@@ -325,13 +344,13 @@ void atualizarJogo(Jogo &jogo, float dt) {
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             if (jogo.arrastandoMusica) {
-                float v = (mouse.x - 380.0f) / 340.0f;
+                float v = (mouse.x - sx) / 340.0f;
                 if (v < 0.0f) v = 0.0f;
                 if (v > 1.0f) v = 1.0f;
                 jogo.volumeMusica = v;
                 if (jogo.musicaCarregada) SetMusicVolume(jogo.musicaMenu, jogo.volumeMusica);
             } else if (jogo.arrastandoEfeitos) {
-                float v = (mouse.x - 380.0f) / 340.0f;
+                float v = (mouse.x - sx) / 340.0f;
                 if (v < 0.0f) v = 0.0f;
                 if (v > 1.0f) v = 1.0f;
                 jogo.volumeEfeitos = v;
@@ -347,13 +366,17 @@ void atualizarJogo(Jogo &jogo, float dt) {
     }
 
     if (jogo.estado == ESTADO_PERGUNTA_PRIMEIRA_VEZ) {
+        int bSimX = (LARGURA_JANELA - 340) / 2;
+        int bNaoX = bSimX + 200;
+        int by = 320;
+
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){380, 320, 140, 50})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)bSimX, (float)by, 140, 50})) {
                 tocarClick(jogo);
                 jogo.indiceCutscene = 0;
                 jogo.estado = ESTADO_CUTSCENE;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){580, 320, 140, 50})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bNaoX, (float)by, 140, 50})) {
                 tocarClick(jogo);
                 iniciarFase(jogo, 1);
             }
@@ -362,9 +385,14 @@ void atualizarJogo(Jogo &jogo, float dt) {
     }
 
     if (jogo.estado == ESTADO_CUTSCENE) {
+        int cx = (LARGURA_JANELA - 900) / 2;
+        int cy = 70;
+        int bx = cx + 900 - 90 - 40;
+        int by = cy + 430 - 50 - 20;
+
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){960, 520, 90, 50})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)by, 90, 50})) {
                 tocarClick(jogo);
                 jogo.indiceCutscene++;
                 if (jogo.indiceCutscene >= jogo.totalCutscenes) {
@@ -376,9 +404,13 @@ void atualizarJogo(Jogo &jogo, float dt) {
     }
 
     if (jogo.estado == ESTADO_TUTORIAL) {
+        int cy = 60;
+        int bx = (LARGURA_JANELA - 200) / 2;
+        int by = cy + 410;
+
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){450, 500, 200, 50})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)by, 200, 45})) {
                 tocarClick(jogo);
                 iniciarFase(jogo, 1);
             }
@@ -391,9 +423,11 @@ void atualizarJogo(Jogo &jogo, float dt) {
             tocarClick(jogo);
             jogo.estado = ESTADO_MENU;
         }
+        int bx = (LARGURA_JANELA - 200) / 2;
+        int by = 530;
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){450, 530, 200, 40})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)by, 200, 40})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_MENU;
             }
@@ -413,12 +447,17 @@ void atualizarJogo(Jogo &jogo, float dt) {
             return;
         }
 
+        int boardW = COLUNAS * TAM_CELULA;
+        int b1X = (boardW - 310) / 2;
+        int b2X = b1X + 170;
+        int by = (ALTURA_JANELA - 180) / 2 + 115;
+
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){250, 310, 140, 45})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)b1X, (float)by, 140, 45})) {
                 tocarClick(jogo);
                 iniciarFase(jogo, jogo.numeroFase);
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){420, 310, 140, 45})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)b2X, (float)by, 140, 45})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_RANKING;
             }
@@ -433,18 +472,21 @@ void atualizarJogo(Jogo &jogo, float dt) {
             return;
         }
 
+        int bx = (LARGURA_JANELA - 220) / 2;
+        int cy = (ALTURA_JANELA - 350) / 2;
+
         Vector2 mouse = GetMousePosition();
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            if (CheckCollisionPointRec(mouse, (Rectangle){440, 240, 220, 45})) {
+            if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)cy + 90, 220, 45})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_JOGANDO;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){440, 300, 220, 45})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)cy + 150, 220, 45})) {
                 tocarClick(jogo);
                 iniciarFase(jogo, jogo.numeroFase);
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){440, 360, 220, 45})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)cy + 210, 220, 45})) {
                 tocarClick(jogo);
                 jogo.estado = ESTADO_MENU;
-            } else if (CheckCollisionPointRec(mouse, (Rectangle){440, 420, 220, 45})) {
+            } else if (CheckCollisionPointRec(mouse, (Rectangle){(float)bx, (float)cy + 270, 220, 45})) {
                 tocarClick(jogo);
                 jogo.deveFechar = true;
             }
@@ -585,242 +627,322 @@ void atualizarJogo(Jogo &jogo, float dt) {
 void desenharJogo(const Jogo &jogo) {
     if (jogo.estado == ESTADO_MENU) {
         ClearBackground((Color){30, 20, 35, 255});
-        DrawText("WHILE (GULOSO)", 340, 75, 50, (Color){255, 182, 193, 255});
-        DrawText("Evite o fim do mundo e coma todos os doces malvados!", 255, 140, 21, (Color){255, 205, 220, 255});
+        int titW = MeasureText("WHILE (GULOSO)", 50);
+        DrawText("WHILE (GULOSO)", (LARGURA_JANELA - titW) / 2, 75, 50, (Color){255, 182, 193, 255});
+        int subW = MeasureText("Evite o fim do mundo e coma todos os doces malvados!", 21);
+        DrawText("Evite o fim do mundo e coma todos os doces malvados!", (LARGURA_JANELA - subW) / 2, 140, 21, (Color){255, 205, 220, 255});
 
-        DrawRectangle(350, 210, 400, 45, (Color){50, 35, 55, 255});
+        int cx = (LARGURA_JANELA - 400) / 2;
+        int bx = (LARGURA_JANELA - 200) / 2;
+
+        DrawRectangle(cx, 210, 400, 45, (Color){50, 35, 55, 255});
         Color corBordaCaixa = jogo.digitandoNome ? (Color){255, 182, 193, 255} : (Color){200, 150, 180, 255};
-        DrawRectangleLines(350, 210, 400, 45, corBordaCaixa);
-        DrawText("Nome do Jogador: (clique para digitar)", 350, 185, 16, (Color){245, 220, 235, 255});
+        DrawRectangleLines(cx, 210, 400, 45, corBordaCaixa);
+        DrawText("Nome do Jogador: (clique para digitar)", cx, 185, 16, (Color){245, 220, 235, 255});
 
         string textoExibido = jogo.nomeJogador;
         if (jogo.digitandoNome && ((int)(GetTime() * 2) % 2 == 0)) {
             textoExibido += "|";
         }
-        DrawText(textoExibido.c_str(), 365, 222, 22, (Color){255, 240, 180, 255});
+        DrawText(textoExibido.c_str(), cx + 15, 222, 22, (Color){255, 240, 180, 255});
 
-        DrawRectangle(450, 285, 200, 38, (Color){115, 185, 135, 255});
-        DrawRectangleLines(450, 285, 200, 38, (Color){220, 245, 230, 255});
-        DrawText("INICIAR", 512, 294, 19, WHITE);
+        DrawRectangle(bx, 285, 200, 38, (Color){115, 185, 135, 255});
+        DrawRectangleLines(bx, 285, 200, 38, (Color){220, 245, 230, 255});
+        int tIni = MeasureText("INICIAR", 19);
+        DrawText("INICIAR", bx + (200 - tIni) / 2, 294, 19, WHITE);
 
-        DrawRectangle(450, 335, 200, 38, (Color){160, 140, 200, 255});
-        DrawRectangleLines(450, 335, 200, 38, (Color){235, 225, 255, 255});
-        DrawText("CONFIGURACOES", 475, 344, 17, WHITE);
+        DrawRectangle(bx, 335, 200, 38, (Color){160, 140, 200, 255});
+        DrawRectangleLines(bx, 335, 200, 38, (Color){235, 225, 255, 255});
+        int tCfg = MeasureText("CONFIGURACOES", 17);
+        DrawText("CONFIGURACOES", bx + (200 - tCfg) / 2, 344, 17, WHITE);
 
-        DrawRectangle(450, 385, 200, 38, (Color){110, 150, 200, 255});
-        DrawRectangleLines(450, 385, 200, 38, (Color){220, 235, 250, 255});
-        DrawText("REGRAS", 514, 394, 19, WHITE);
+        DrawRectangle(bx, 385, 200, 38, (Color){110, 150, 200, 255});
+        DrawRectangleLines(bx, 385, 200, 38, (Color){220, 235, 250, 255});
+        int tReg = MeasureText("REGRAS", 19);
+        DrawText("REGRAS", bx + (200 - tReg) / 2, 394, 19, WHITE);
 
-        DrawRectangle(450, 435, 200, 38, (Color){215, 160, 100, 255});
-        DrawRectangleLines(450, 435, 200, 38, (Color){255, 240, 220, 255});
-        DrawText("RANKING", 508, 444, 19, WHITE);
+        DrawRectangle(bx, 435, 200, 38, (Color){215, 160, 100, 255});
+        DrawRectangleLines(bx, 435, 200, 38, (Color){255, 240, 220, 255});
+        int tRnk = MeasureText("RANKING", 19);
+        DrawText("RANKING", bx + (200 - tRnk) / 2, 444, 19, WHITE);
 
-        DrawRectangle(450, 485, 200, 38, (Color){215, 110, 110, 255});
-        DrawRectangleLines(450, 485, 200, 38, (Color){255, 225, 225, 255});
-        DrawText("SAIR", 525, 494, 19, WHITE);
+        DrawRectangle(bx, 485, 200, 38, (Color){215, 110, 110, 255});
+        DrawRectangleLines(bx, 485, 200, 38, (Color){255, 225, 225, 255});
+        int tSai = MeasureText("SAIR", 19);
+        DrawText("SAIR", bx + (200 - tSai) / 2, 494, 19, WHITE);
 
         if (!jogo.mensagemErro.empty()) {
-            DrawText(jogo.mensagemErro.c_str(), 200, 540, 16, RED);
+            int errW = MeasureText(jogo.mensagemErro.c_str(), 16);
+            DrawText(jogo.mensagemErro.c_str(), (LARGURA_JANELA - errW) / 2, 540, 16, RED);
         }
         return;
     }
 
     if (jogo.estado == ESTADO_CONFIGURACOES) {
         ClearBackground((Color){25, 20, 35, 255});
-        DrawText("CONFIGURACOES", 415, 70, 32, (Color){255, 182, 193, 255});
+        int titW = MeasureText("CONFIGURACOES", 32);
+        DrawText("CONFIGURACOES", (LARGURA_JANELA - titW) / 2, 70, 32, (Color){255, 182, 193, 255});
 
-        DrawRectangle(250, 140, 600, 360, (Color){45, 32, 50, 255});
-        DrawRectangleLines(250, 140, 600, 360, (Color){200, 160, 210, 255});
+        int cx = (LARGURA_JANELA - 600) / 2;
+        int cy = 140;
+        int sx = cx + 80;
+        int bx = (LARGURA_JANELA - 200) / 2;
 
-        DrawText("Volume da Musica:", 380, 180, 20, WHITE);
-        DrawRectangle(380, 215, 340, 22, (Color){70, 55, 80, 255});
-        DrawRectangle(380, 215, (int)(340.0f * jogo.volumeMusica), 22, (Color){255, 182, 193, 255});
-        DrawRectangleLines(380, 215, 340, 22, WHITE);
-        DrawCircle(380 + (int)(340.0f * jogo.volumeMusica), 226, 12, (Color){255, 220, 235, 255});
-        DrawText(TextFormat("%d%%", (int)(jogo.volumeMusica * 100.0f + 0.5f)), 735, 216, 19, (Color){255, 240, 180, 255});
+        DrawRectangle(cx, cy, 600, 360, (Color){45, 32, 50, 255});
+        DrawRectangleLines(cx, cy, 600, 360, (Color){200, 160, 210, 255});
 
-        DrawText("Volume dos Efeitos:", 380, 280, 20, WHITE);
-        DrawRectangle(380, 315, 340, 22, (Color){70, 55, 80, 255});
-        DrawRectangle(380, 315, (int)(340.0f * jogo.volumeEfeitos), 22, (Color){160, 200, 255, 255});
-        DrawRectangleLines(380, 315, 340, 22, WHITE);
-        DrawCircle(380 + (int)(340.0f * jogo.volumeEfeitos), 326, 12, (Color){220, 235, 255, 255});
-        DrawText(TextFormat("%d%%", (int)(jogo.volumeEfeitos * 100.0f + 0.5f)), 735, 316, 19, (Color){255, 240, 180, 255});
+        DrawText("Volume da Musica:", sx, cy + 40, 20, WHITE);
+        DrawRectangle(sx, cy + 75, 340, 22, (Color){70, 55, 80, 255});
+        DrawRectangle(sx, cy + 75, (int)(340.0f * jogo.volumeMusica), 22, (Color){255, 182, 193, 255});
+        DrawRectangleLines(sx, cy + 75, 340, 22, WHITE);
+        DrawCircle(sx + (int)(340.0f * jogo.volumeMusica), cy + 86, 12, (Color){255, 220, 235, 255});
+        DrawText(TextFormat("%d%%", (int)(jogo.volumeMusica * 100.0f + 0.5f)), sx + 355, cy + 76, 19, (Color){255, 240, 180, 255});
 
-        DrawRectangle(450, 430, 200, 42, (Color){110, 150, 200, 255});
-        DrawRectangleLines(450, 430, 200, 42, (Color){220, 235, 250, 255});
-        DrawText("VOLTAR", 512, 441, 19, WHITE);
+        DrawText("Volume dos Efeitos:", sx, cy + 140, 20, WHITE);
+        DrawRectangle(sx, cy + 175, 340, 22, (Color){70, 55, 80, 255});
+        DrawRectangle(sx, cy + 175, (int)(340.0f * jogo.volumeEfeitos), 22, (Color){160, 200, 255, 255});
+        DrawRectangleLines(sx, cy + 175, 340, 22, WHITE);
+        DrawCircle(sx + (int)(340.0f * jogo.volumeEfeitos), cy + 186, 12, (Color){220, 235, 255, 255});
+        DrawText(TextFormat("%d%%", (int)(jogo.volumeEfeitos * 100.0f + 0.5f)), sx + 355, cy + 176, 19, (Color){255, 240, 180, 255});
+
+        DrawRectangle(bx, cy + 290, 200, 42, (Color){110, 150, 200, 255});
+        DrawRectangleLines(bx, cy + 290, 200, 42, (Color){220, 235, 250, 255});
+        int tVoltar = MeasureText("VOLTAR", 19);
+        DrawText("VOLTAR", bx + (200 - tVoltar) / 2, cy + 301, 19, WHITE);
         return;
     }
 
     if (jogo.estado == ESTADO_PERGUNTA_PRIMEIRA_VEZ) {
         ClearBackground((Color){35, 25, 40, 255});
-        DrawRectangle(250, 160, 600, 280, (Color){50, 35, 55, 255});
-        DrawRectangleLines(250, 160, 600, 280, (Color){255, 182, 193, 255});
+        int cx = (LARGURA_JANELA - 600) / 2;
+        int cy = 160;
+        int bSimX = (LARGURA_JANELA - 340) / 2;
+        int bNaoX = bSimX + 200;
+        int by = cy + 160;
 
-        DrawText("E a sua primeira vez jogando?", 330, 220, 28, WHITE);
+        DrawRectangle(cx, cy, 600, 280, (Color){50, 35, 55, 255});
+        DrawRectangleLines(cx, cy, 600, 280, (Color){255, 182, 193, 255});
 
-        DrawRectangle(380, 320, 140, 50, (Color){115, 185, 135, 255});
-        DrawRectangleLines(380, 320, 140, 50, (Color){220, 245, 230, 255});
-        DrawText("SIM!", 425, 332, 24, WHITE);
+        int tw = MeasureText("E a sua primeira vez jogando?", 28);
+        DrawText("E a sua primeira vez jogando?", (LARGURA_JANELA - tw) / 2, cy + 60, 28, WHITE);
 
-        DrawRectangle(580, 320, 140, 50, (Color){215, 110, 110, 255});
-        DrawRectangleLines(580, 320, 140, 50, (Color){255, 225, 225, 255});
-        DrawText("NAO!", 620, 332, 24, WHITE);
+        DrawRectangle(bSimX, by, 140, 50, (Color){115, 185, 135, 255});
+        DrawRectangleLines(bSimX, by, 140, 50, (Color){220, 245, 230, 255});
+        int tSim = MeasureText("SIM!", 24);
+        DrawText("SIM!", bSimX + (140 - tSim) / 2, by + 12, 24, WHITE);
+
+        DrawRectangle(bNaoX, by, 140, 50, (Color){215, 110, 110, 255});
+        DrawRectangleLines(bNaoX, by, 140, 50, (Color){255, 225, 225, 255});
+        int tNao = MeasureText("NAO!", 24);
+        DrawText("NAO!", bNaoX + (140 - tNao) / 2, by + 12, 24, WHITE);
         return;
     }
 
     if (jogo.estado == ESTADO_CUTSCENE) {
         ClearBackground((Color){25, 18, 30, 255});
 
-        DrawRectangle(100, 70, 900, 430, (Color){45, 32, 50, 255});
-        DrawRectangleLines(100, 70, 900, 430, (Color){200, 160, 210, 255});
+        int cx = (LARGURA_JANELA - 900) / 2;
+        int cy = 70;
+        int bx = cx + 900 - 90 - 40;
+        int by = cy + 430 - 50 - 20;
+        int centerX = LARGURA_JANELA / 2;
 
-        DrawText(TextFormat("HISTORIA - PARTE %d DE %d", jogo.indiceCutscene + 1, jogo.totalCutscenes), 380, 100, 24, (Color){255, 182, 193, 255});
+        DrawRectangle(cx, cy, 900, 430, (Color){45, 32, 50, 255});
+        DrawRectangleLines(cx, cy, 900, 430, (Color){200, 160, 210, 255});
+
+        const char *tit = TextFormat("HISTORIA - PARTE %d DE %d", jogo.indiceCutscene + 1, jogo.totalCutscenes);
+        int titW = MeasureText(tit, 24);
+        DrawText(tit, (LARGURA_JANELA - titW) / 2, cy + 30, 24, (Color){255, 182, 193, 255});
 
         if (jogo.indiceCutscene == 0) {
-            DrawText("Oiee essa e a demo!", 160, 180, 22, WHITE);
-            DrawText("Esse e o Guloso,", 160, 220, 22, WHITE);
-            DrawText("ele nao e fofinho?", 160, 260, 22, WHITE);
-            DrawCircle(550, 380, 40, (Color){255, 215, 0, 255});
-            DrawCircle(535, 370, 5, BLACK);
-            DrawCircle(565, 370, 5, BLACK);
-            DrawCircleSector((Vector2){550.0f, 385.0f}, 20.0f, 0, 180, 10, RED);
+            DrawText("Oiee essa e a demo!", cx + 60, cy + 110, 22, WHITE);
+            DrawText("Esse e o Guloso,", cx + 60, cy + 150, 22, WHITE);
+            DrawText("ele nao e fofinho?", cx + 60, cy + 190, 22, WHITE);
+            DrawCircle(centerX, cy + 310, 40, (Color){255, 215, 0, 255});
+            DrawCircle(centerX - 15, cy + 300, 5, BLACK);
+            DrawCircle(centerX + 15, cy + 300, 5, BLACK);
+            DrawCircleSector((Vector2){(float)centerX, (float)cy + 315}, 20.0f, 0, 180, 10, RED);
         } else if (jogo.indiceCutscene == 1) {
-            DrawText("Voce tem que catar todos os docinhos", 160, 180, 22, WHITE);
-            DrawText("para sobreviver e manter suas energias. O Guloso tem que", 160, 220, 22, WHITE);
-            DrawText("se alimentar constantemente dos docinhos pelo caminho.", 160, 260, 22, WHITE);
-            DrawText("Cuidado: se a fome zerar, ele perde uma de suas 3 vidas!", 160, 300, 22, (Color){255, 140, 140, 255});
+            DrawText("Voce tem que catar todos os docinhos", cx + 60, cy + 110, 22, WHITE);
+            DrawText("para sobreviver e manter suas energias. O Guloso tem que", cx + 60, cy + 150, 22, WHITE);
+            DrawText("se alimentar constantemente dos docinhos pelo caminho.", cx + 60, cy + 190, 22, WHITE);
+            DrawText("Cuidado: se a fome zerar, ele perde uma de suas 3 vidas!", cx + 60, cy + 230, 22, (Color){255, 140, 140, 255});
         } else {
-            DrawText("A chave para escapar de cada setor e o raro DOCE DOURADO.", 160, 180, 22, WHITE);
-            DrawText("Colete a cota necessaria de doces para faze-lo surgir,", 160, 220, 22, WHITE);
-            DrawText("pegue o Doce Dourado e corra para o portal da Saida (S)!", 160, 260, 22, WHITE);
-            DrawCircle(550, 370, 30, (Color){255, 215, 0, 255});
-            DrawCircleLines(550, 370, 30, WHITE);
+            DrawText("A chave para escapar de cada setor e o raro DOCE DOURADO.", cx + 60, cy + 110, 22, WHITE);
+            DrawText("Colete a cota necessaria de doces para faze-lo surgir,", cx + 60, cy + 150, 22, WHITE);
+            DrawText("pegue o Doce Dourado e corra para o portal da Saida (S)!", cx + 60, cy + 190, 22, WHITE);
+            DrawCircle(centerX, cy + 300, 30, (Color){255, 215, 0, 255});
+            DrawCircleLines(centerX, cy + 300, 30, WHITE);
         }
 
-        DrawRectangle(960, 520, 90, 50, (Color){115, 185, 135, 255});
-        DrawRectangleLines(960, 520, 90, 50, (Color){220, 245, 230, 255});
-        DrawText("->", 995, 532, 26, WHITE);
+        DrawRectangle(bx, by, 90, 50, (Color){115, 185, 135, 255});
+        DrawRectangleLines(bx, by, 90, 50, (Color){220, 245, 230, 255});
+        int tAv = MeasureText("->", 26);
+        DrawText("->", bx + (90 - tAv) / 2, by + 12, 26, WHITE);
         return;
     }
 
     if (jogo.estado == ESTADO_TUTORIAL) {
         ClearBackground((Color){25, 20, 35, 255});
-        DrawRectangle(150, 60, 800, 480, (Color){45, 35, 55, 255});
-        DrawRectangleLines(150, 60, 800, 480, (Color){255, 182, 193, 255});
+        int cx = (LARGURA_JANELA - 800) / 2;
+        int cy = 60;
+        int bx = (LARGURA_JANELA - 200) / 2;
+        int by = cy + 410;
 
-        DrawText("TUTORIAL & CONTROLES", 400, 90, 26, (Color){255, 182, 193, 255});
-        DrawText("• Teclas W, A, S, D ou SETAS: Movimentam o Guloso", 200, 160, 19, WHITE);
-        DrawText("• Fome & Energia: A barra diminui com o tempo!", 200, 200, 19, (Color){255, 200, 120, 255});
-        DrawText("• Doces Normais: Balas, Chocolates, Rosquinhas, Cupcakes e Bolos", 200, 240, 18, WHITE);
-        DrawText("• Piso de Caramelo: Deixa lento e drena a fome aos poucos", 200, 280, 18, (Color){255, 160, 90, 255});
-        DrawText("• Pirulito: Recupera 100% da fome (uso unico)", 200, 320, 18, (Color){255, 140, 180, 255});
-        DrawText("• Inimigos & Sentinela: Tiram 1 VIDA direta se atingirem voce", 200, 360, 18, (Color){255, 120, 120, 255});
-        DrawText("• Meta: Pegue o Doce Dourado e va para a Saida (S)", 200, 400, 18, (Color){140, 235, 160, 255});
+        DrawRectangle(cx, cy, 800, 480, (Color){45, 35, 55, 255});
+        DrawRectangleLines(cx, cy, 800, 480, (Color){255, 182, 193, 255});
 
-        DrawRectangle(450, 470, 200, 45, (Color){115, 185, 135, 255});
-        DrawRectangleLines(450, 470, 200, 45, (Color){220, 245, 230, 255});
-        DrawText("JOGAR AGORA", 475, 482, 20, WHITE);
+        int titW = MeasureText("TUTORIAL & CONTROLES", 26);
+        DrawText("TUTORIAL & CONTROLES", (LARGURA_JANELA - titW) / 2, cy + 30, 26, (Color){255, 182, 193, 255});
+        DrawText("• Teclas W, A, S, D ou SETAS: Movimentam o Guloso", cx + 50, cy + 100, 19, WHITE);
+        DrawText("• Fome & Energia: A barra diminui com o tempo!", cx + 50, cy + 140, 19, (Color){255, 200, 120, 255});
+        DrawText("• Doces Normais: Balas, Chocolates, Rosquinhas, Cupcakes e Bolos", cx + 50, cy + 180, 18, WHITE);
+        DrawText("• Piso de Caramelo: Deixa lento e drena a fome aos poucos", cx + 50, cy + 220, 18, (Color){255, 160, 90, 255});
+        DrawText("• Pirulito: Recupera 100% da fome (uso unico)", cx + 50, cy + 260, 18, (Color){255, 140, 180, 255});
+        DrawText("• Inimigos & Sentinela: Tiram 1 VIDA direta se atingirem voce", cx + 50, cy + 300, 18, (Color){255, 120, 120, 255});
+        DrawText("• Meta: Pegue o Doce Dourado e va para a Saida (S)", cx + 50, cy + 340, 18, (Color){140, 235, 160, 255});
+
+        DrawRectangle(bx, by, 200, 45, (Color){115, 185, 135, 255});
+        DrawRectangleLines(bx, by, 200, 45, (Color){220, 245, 230, 255});
+        int tJogar = MeasureText("JOGAR AGORA", 20);
+        DrawText("JOGAR AGORA", bx + (200 - tJogar) / 2, by + 12, 20, WHITE);
         return;
     }
 
     if (jogo.estado == ESTADO_REGRAS) {
         ClearBackground((Color){25, 20, 35, 255});
-        DrawText("REGRAS DO JOGO", 430, 40, 28, (Color){255, 182, 193, 255});
+        int titW = MeasureText("REGRAS DO JOGO", 28);
+        DrawText("REGRAS DO JOGO", (LARGURA_JANELA - titW) / 2, 40, 28, (Color){255, 182, 193, 255});
 
-        DrawRectangle(100, 85, 900, 420, (Color){40, 30, 45, 255});
-        DrawRectangleLines(100, 85, 900, 420, (Color){160, 120, 150, 255});
+        int cx = (LARGURA_JANELA - 900) / 2;
+        int cy = 85;
+        int bx = (LARGURA_JANELA - 200) / 2;
+        int by = 530;
 
-        DrawRectangle(450, 530, 200, 40, (Color){110, 150, 200, 255});
-        DrawRectangleLines(450, 530, 200, 40, (Color){220, 235, 250, 255});
-        DrawText("VOLTAR", 510, 540, 18, WHITE);
+        DrawRectangle(cx, cy, 900, 420, (Color){40, 30, 45, 255});
+        DrawRectangleLines(cx, cy, 900, 420, (Color){160, 120, 150, 255});
+
+        DrawRectangle(bx, by, 200, 40, (Color){110, 150, 200, 255});
+        DrawRectangleLines(bx, by, 200, 40, (Color){220, 235, 250, 255});
+        int tVoltar = MeasureText("VOLTAR", 18);
+        DrawText("VOLTAR", bx + (200 - tVoltar) / 2, by + 10, 18, WHITE);
         return;
     }
 
     if (jogo.estado == ESTADO_RANKING) {
         ClearBackground((Color){25, 20, 35, 255});
-        DrawText("RANKING DE JOGADORES", 380, 40, 28, (Color){255, 182, 193, 255});
+        int titW = MeasureText("RANKING DE JOGADORES", 28);
+        DrawText("RANKING DE JOGADORES", (LARGURA_JANELA - titW) / 2, 40, 28, (Color){255, 182, 193, 255});
 
         vector<Estatistica> ranking = obterRankingEstatisticas();
-        DrawRectangle(100, 85, 900, 420, (Color){40, 30, 45, 255});
-        DrawRectangleLines(100, 85, 900, 420, (Color){160, 120, 150, 255});
+        int cx = (LARGURA_JANELA - 900) / 2;
+        int cy = 85;
+        int bx = (LARGURA_JANELA - 200) / 2;
+        int by = 530;
 
-        DrawText("POS", 130, 105, 16, (Color){255, 182, 193, 255});
-        DrawText("NOME", 200, 105, 16, (Color){255, 182, 193, 255});
-        DrawText("PARTIDAS", 420, 105, 16, (Color){255, 182, 193, 255});
-        DrawText("VITORIAS", 540, 105, 16, (Color){255, 182, 193, 255});
-        DrawText("DERROTAS", 660, 105, 16, (Color){255, 182, 193, 255});
-        DrawText("MAIOR PTS", 780, 105, 16, (Color){255, 182, 193, 255});
-        DrawText("FASES", 900, 105, 16, (Color){255, 182, 193, 255});
+        DrawRectangle(cx, cy, 900, 420, (Color){40, 30, 45, 255});
+        DrawRectangleLines(cx, cy, 900, 420, (Color){160, 120, 150, 255});
 
-        DrawLine(120, 130, 970, 130, (Color){120, 90, 110, 255});
+        DrawText("POS", cx + 30, cy + 20, 16, (Color){255, 182, 193, 255});
+        DrawText("NOME", cx + 100, cy + 20, 16, (Color){255, 182, 193, 255});
+        DrawText("PARTIDAS", cx + 320, cy + 20, 16, (Color){255, 182, 193, 255});
+        DrawText("VITORIAS", cx + 440, cy + 20, 16, (Color){140, 235, 160, 255});
+        DrawText("DERROTAS", cx + 560, cy + 20, 16, (Color){255, 130, 130, 255});
+        DrawText("MAIOR PTS", cx + 680, cy + 20, 16, (Color){255, 240, 180, 255});
+        DrawText("FASES", cx + 800, cy + 20, 16, (Color){255, 182, 193, 255});
+
+        DrawLine(cx + 20, cy + 45, cx + 870, cy + 45, (Color){120, 90, 110, 255});
 
         int maxItens = min((int)ranking.size(), 10);
         for (int i = 0; i < maxItens; i++) {
-            int y = 145 + i * 32;
-            DrawText(TextFormat("%d.", i + 1), 130, y, 16, WHITE);
-            DrawText(ranking[i].nome, 200, y, 16, WHITE);
-            DrawText(TextFormat("%d", ranking[i].partidasJogadas), 450, y, 16, WHITE);
-            DrawText(TextFormat("%d", ranking[i].vitorias), 570, y, 16, (Color){140, 235, 160, 255});
-            DrawText(TextFormat("%d", ranking[i].derrotas), 690, y, 16, (Color){255, 130, 130, 255});
-            DrawText(TextFormat("%d", ranking[i].maiorPontuacao), 800, y, 16, (Color){255, 240, 180, 255});
-            DrawText(TextFormat("%d", ranking[i].fasesConcluidas), 920, y, 16, WHITE);
+            int y = cy + 60 + i * 32;
+            DrawText(TextFormat("%d.", i + 1), cx + 30, y, 16, WHITE);
+            DrawText(ranking[i].nome, cx + 100, y, 16, WHITE);
+            DrawText(TextFormat("%d", ranking[i].partidasJogadas), cx + 350, y, 16, WHITE);
+            DrawText(TextFormat("%d", ranking[i].vitorias), cx + 470, y, 16, (Color){140, 235, 160, 255});
+            DrawText(TextFormat("%d", ranking[i].derrotas), cx + 590, y, 16, (Color){255, 130, 130, 255});
+            DrawText(TextFormat("%d", ranking[i].maiorPontuacao), cx + 700, y, 16, (Color){255, 240, 180, 255});
+            DrawText(TextFormat("%d", ranking[i].fasesConcluidas), cx + 820, y, 16, WHITE);
         }
 
-        DrawRectangle(450, 530, 200, 40, (Color){110, 150, 200, 255});
-        DrawRectangleLines(450, 530, 200, 40, (Color){220, 235, 250, 255});
-        DrawText("VOLTAR", 510, 540, 18, WHITE);
+        DrawRectangle(bx, by, 200, 40, (Color){110, 150, 200, 255});
+        DrawRectangleLines(bx, by, 200, 40, (Color){220, 235, 250, 255});
+        int tVoltar = MeasureText("VOLTAR", 18);
+        DrawText("VOLTAR", bx + (200 - tVoltar) / 2, by + 10, 18, WHITE);
         return;
     }
 
-    desenharCenario(jogo.faseAtual, jogo.portaAberta, jogo.boloSprite);
+    desenharCenario(jogo.faseAtual, jogo.portaAberta, jogo.boloSprite, jogo.sorveteInimigoSprite);
     desenharDoces(jogo.doces, jogo.balaSprite, jogo.chocolateSprite, jogo.donutSprite, jogo.jujubaSprite, jogo.pirulitoSprite, jogo.DoceDouradoSprite);
-    desenharInimigos(jogo.inimigos, jogo.cupcakeInimigoSprite);
-    desenharProjeteis(jogo.projeteis);
+    desenharInimigos(jogo.inimigos, jogo.cupcakeInimigoSprite, jogo.rocamboleInimigoSprite);
+    desenharProjeteis(jogo.projeteis, jogo.geloSprite);
     desenharGuloso(jogo.guloso, jogo.gulosoSprite);
     desenharPainel(jogo.guloso, jogo.numeroFase, jogo.tempoFase, jogo.faseAtual.metaDoces);
 
     if (jogo.estado == ESTADO_PAUSA) {
         DrawRectangle(0, 0, LARGURA_JANELA, ALTURA_JANELA, (Color){15, 10, 20, 180});
 
-        DrawRectangle(380, 150, 340, 350, (Color){45, 30, 45, 245});
-        DrawRectangleLines(380, 150, 340, 350, (Color){255, 182, 193, 255});
-        DrawText("JOGO PAUSADO", 450, 180, 26, (Color){255, 182, 193, 255});
+        int cx = (LARGURA_JANELA - 340) / 2;
+        int cy = (ALTURA_JANELA - 350) / 2;
+        int bx = (LARGURA_JANELA - 220) / 2;
 
-        DrawRectangle(440, 240, 220, 45, (Color){115, 185, 135, 255});
-        DrawRectangleLines(440, 240, 220, 45, (Color){220, 245, 230, 255});
-        DrawText("CONTINUAR", 495, 253, 18, WHITE);
+        DrawRectangle(cx, cy, 340, 350, (Color){45, 30, 45, 245});
+        DrawRectangleLines(cx, cy, 340, 350, (Color){255, 182, 193, 255});
+        int tw = MeasureText("JOGO PAUSADO", 26);
+        DrawText("JOGO PAUSADO", (LARGURA_JANELA - tw) / 2, cy + 30, 26, (Color){255, 182, 193, 255});
 
-        DrawRectangle(440, 300, 220, 45, (Color){110, 150, 200, 255});
-        DrawRectangleLines(440, 300, 220, 45, (Color){220, 235, 250, 255});
-        DrawText("REINICIAR FASE", 480, 313, 18, WHITE);
+        DrawRectangle(bx, cy + 90, 220, 45, (Color){115, 185, 135, 255});
+        DrawRectangleLines(bx, cy + 90, 220, 45, (Color){220, 245, 230, 255});
+        int t1 = MeasureText("CONTINUAR", 18);
+        DrawText("CONTINUAR", bx + (220 - t1) / 2, cy + 103, 18, WHITE);
 
-        DrawRectangle(440, 360, 220, 45, (Color){215, 160, 100, 255});
-        DrawRectangleLines(440, 360, 220, 45, (Color){255, 240, 220, 255});
-        DrawText("VOLTAR AO MENU", 470, 373, 18, WHITE);
+        DrawRectangle(bx, cy + 150, 220, 45, (Color){110, 150, 200, 255});
+        DrawRectangleLines(bx, cy + 150, 220, 45, (Color){220, 235, 250, 255});
+        int t2 = MeasureText("REINICIAR FASE", 18);
+        DrawText("REINICIAR FASE", bx + (220 - t2) / 2, cy + 163, 18, WHITE);
 
-        DrawRectangle(440, 420, 220, 45, (Color){215, 110, 110, 255});
-        DrawRectangleLines(440, 420, 220, 45, (Color){255, 225, 225, 255});
-        DrawText("SAIR DO JOGO", 485, 433, 18, WHITE);
+        DrawRectangle(bx, cy + 210, 220, 45, (Color){215, 160, 100, 255});
+        DrawRectangleLines(bx, cy + 210, 220, 45, (Color){255, 240, 220, 255});
+        int t3 = MeasureText("VOLTAR AO MENU", 18);
+        DrawText("VOLTAR AO MENU", bx + (220 - t3) / 2, cy + 223, 18, WHITE);
+
+        DrawRectangle(bx, cy + 270, 220, 45, (Color){215, 110, 110, 255});
+        DrawRectangleLines(bx, cy + 270, 220, 45, (Color){255, 225, 225, 255});
+        int t4 = MeasureText("SAIR DO JOGO", 18);
+        DrawText("SAIR DO JOGO", bx + (220 - t4) / 2, cy + 283, 18, WHITE);
     }
 
     if (jogo.estado == ESTADO_VITORIA) {
         desenharMensagem("PARABENS", "Voce comeu todos os doces e evitou o caos!", (Color){60, 240, 90, 255});
-        DrawRectangle(250, 310, 140, 45, (Color){50, 160, 70, 255});
-        DrawRectangleLines(250, 310, 140, 45, WHITE);
-        DrawText("REINICIAR", 270, 323, 17, WHITE);
+        int boardW = COLUNAS * TAM_CELULA;
+        int b1X = (boardW - 310) / 2;
+        int b2X = b1X + 170;
+        int by = (ALTURA_JANELA - 180) / 2 + 115;
 
-        DrawRectangle(420, 310, 140, 45, (Color){60, 100, 180, 255});
-        DrawRectangleLines(420, 310, 140, 45, WHITE);
-        DrawText("RANKING", 445, 323, 17, WHITE);
+        DrawRectangle(b1X, by, 140, 45, (Color){50, 160, 70, 255});
+        DrawRectangleLines(b1X, by, 140, 45, WHITE);
+        int tRei = MeasureText("REINICIAR", 17);
+        DrawText("REINICIAR", b1X + (140 - tRei) / 2, by + 13, 17, WHITE);
+
+        DrawRectangle(b2X, by, 140, 45, (Color){60, 100, 180, 255});
+        DrawRectangleLines(b2X, by, 140, 45, WHITE);
+        int tRnk = MeasureText("RANKING", 17);
+        DrawText("RANKING", b2X + (140 - tRnk) / 2, by + 13, 17, WHITE);
     } else if (jogo.estado == ESTADO_GAME_OVER) {
         desenharMensagem("GAME OVER!", "Suas vidas acabaram!", (Color){255, 60, 60, 255});
-        DrawRectangle(250, 310, 140, 45, (Color){50, 160, 70, 255});
-        DrawRectangleLines(250, 310, 140, 45, WHITE);
-        DrawText("REINICIAR", 270, 323, 17, WHITE);
+        int boardW = COLUNAS * TAM_CELULA;
+        int b1X = (boardW - 310) / 2;
+        int b2X = b1X + 170;
+        int by = (ALTURA_JANELA - 180) / 2 + 115;
 
-        DrawRectangle(420, 310, 140, 45, (Color){180, 50, 50, 255});
-        DrawRectangleLines(420, 310, 140, 45, WHITE);
-        DrawText("RANKING", 445, 323, 17, WHITE);
+        DrawRectangle(b1X, by, 140, 45, (Color){50, 160, 70, 255});
+        DrawRectangleLines(b1X, by, 140, 45, WHITE);
+        int tRei = MeasureText("REINICIAR", 17);
+        DrawText("REINICIAR", b1X + (140 - tRei) / 2, by + 13, 17, WHITE);
+
+        DrawRectangle(b2X, by, 140, 45, (Color){180, 50, 50, 255});
+        DrawRectangleLines(b2X, by, 140, 45, WHITE);
+        int tRnk = MeasureText("RANKING", 17);
+        DrawText("RANKING", b2X + (140 - tRnk) / 2, by + 13, 17, WHITE);
     }
 }

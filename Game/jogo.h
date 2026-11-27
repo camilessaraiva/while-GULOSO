@@ -35,6 +35,9 @@ struct Jogo {
     Texture2D donutSprite;
     Texture2D boloSprite;
     Texture2D cupcakeInimigoSprite;
+    Texture2D sorveteInimigoSprite;
+    Texture2D rocamboleInimigoSprite;
+    Texture2D geloSprite;
     vector<Inimigo> inimigos;
     vector<Projetil> projeteis;
     vector<DoceItem> doces;

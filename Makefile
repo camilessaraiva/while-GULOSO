@@ -1,5 +1,5 @@
 CXX = g++
-CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -I. -I./src -I./Types -I./Assets -I./Scenario -I./Character -I./Obstacles -I./Game -I/usr/local/include
+CXXFLAGS = -std=c++17 -Wall -Wextra -O2 -MMD -MP -I. -I./src -I./Types -I./Assets -I./Scenario -I./Character -I./Obstacles -I./Game -I/usr/local/include
 LDFLAGS = -L/usr/local/lib -lraylib -lGL -lm -lpthread -ldl -lrt -lX11
 
 BUILD_DIR = build
@@ -13,6 +13,7 @@ SRCS = src/main.cpp \
        Character/guloso.cpp
 
 OBJS = $(patsubst %.cpp, $(BUILD_DIR)/%.o, $(SRCS))
+DEPS = $(OBJS:.o=.d)
 
 all: $(TARGET)
 
@@ -22,6 +23,8 @@ $(TARGET): $(OBJS)
 $(BUILD_DIR)/%.o: %.cpp
 	@mkdir -p $(dir $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@
+
+-include $(DEPS)
 
 clean:
 	rm -rf $(BUILD_DIR)
